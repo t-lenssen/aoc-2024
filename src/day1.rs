@@ -39,56 +39,17 @@ pub fn part1(input: &str) -> i32 {
 #[aoc(day1, part2)]
 pub fn part2(input: &str) -> i32 {
     let mut a: [MaybeUninit<i32>; 1000] = [const { MaybeUninit::uninit() }; 1000];
-    let mut b: [MaybeUninit<i32>; 1000] = [const { MaybeUninit::uninit() }; 1000];
 
+    let mut b_map: [i32; 100000] = [0; 100000];
     for (i, l) in input.lines().enumerate() {
         let (a_i, b_i) = fast_inp(l);
         a[i].write(a_i);
-        b[i].write(b_i);
+        b_map[b_i as usize] += 1;
     }
-
     
-    let mut sorted_a = unsafe { mem::transmute::<_, [i32; 1000]>(a) }; 
-    let mut sorted_b = unsafe { mem::transmute::<_, [i32; 1000]>(b) }; 
-
-    sorted_a.sort_unstable();
-    sorted_b.sort_unstable();
-
-    let mut score = 0;
-    let mut b_idx = 0;
-
-    let mut b_i_cnt = 0;
-    let mut prev_a_i = -1;
-    let mut a_i_cnt = 1;
-
-    'outer: for a_i in sorted_a {
-        if a_i == prev_a_i {
-            a_i_cnt += 1;
-        } else {
-            score += prev_a_i * a_i_cnt * b_i_cnt;
-            b_i_cnt = 0;
-            a_i_cnt = 1;
-        }
-        prev_a_i = a_i;
-        while a_i > sorted_b[b_idx] {
-            b_idx += 1;
-            
-            if b_idx == 1000 {
-                break 'outer;
-            }
-        }
-        while a_i == sorted_b[b_idx] {
-            b_i_cnt += 1;
-            b_idx += 1;
-            if b_idx == 1000 {
-                break 'outer;
-            }
-        }
+    unsafe {
+        a.iter().map(|a_i| a_i.assume_init() * b_map[a_i.assume_init() as usize]).sum()
     }
-
-    score += prev_a_i * a_i_cnt * b_i_cnt;
-
-    score
 }
 
 #[cfg(test)]
