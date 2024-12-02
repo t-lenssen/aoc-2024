@@ -1,13 +1,29 @@
 use std::mem::{self, MaybeUninit};
 
+pub fn fast_inp(input: &str) -> (i32, i32) {
+    let inp_bytes = input.as_bytes();
+    let a = (inp_bytes[0] - b'0') as i32 * 10000 +
+                (inp_bytes[1] - b'0') as i32 * 1000 +
+                (inp_bytes[2] - b'0') as i32 * 100 +
+                (inp_bytes[3] - b'0') as i32 * 10 +
+                (inp_bytes[4] - b'0') as i32 * 1;
+    let b = (inp_bytes[8 + 0] - b'0') as i32 * 10000 +
+                (inp_bytes[8 + 1] - b'0') as i32 * 1000 +
+                (inp_bytes[8 + 2] - b'0') as i32 * 100 +
+                (inp_bytes[8 + 3] - b'0') as i32 * 10 +
+                (inp_bytes[8 + 4] - b'0') as i32 * 1;
+    (a, b)
+}
+
 #[aoc(day1, part1)]
 pub fn part1(input: &str) -> i32 {
     let mut a: [MaybeUninit<i32>; 1000] = [const { MaybeUninit::uninit() }; 1000];
     let mut b: [MaybeUninit<i32>; 1000] = [const { MaybeUninit::uninit() }; 1000];
 
     for (i, l) in input.lines().enumerate() {
-        a[i].write(l[0..5].parse::<i32>().unwrap());
-        b[i].write(l[8..13].parse::<i32>().unwrap());
+        let (a_i, b_i) = fast_inp(l);
+        a[i].write(a_i);
+        b[i].write(b_i);
     }
 
     
@@ -26,8 +42,9 @@ pub fn part2(input: &str) -> i32 {
     let mut b: [MaybeUninit<i32>; 1000] = [const { MaybeUninit::uninit() }; 1000];
 
     for (i, l) in input.lines().enumerate() {
-        a[i].write(l[0..5].parse::<i32>().unwrap());
-        b[i].write(l[8..13].parse::<i32>().unwrap());
+        let (a_i, b_i) = fast_inp(l);
+        a[i].write(a_i);
+        b[i].write(b_i);
     }
 
     
@@ -86,5 +103,15 @@ mod tests {
                         1   3
                         3   9
                         3   3"), 11);
+    }
+
+    #[test]
+    fn sample2() {
+        assert_eq!(part2("3   4
+                        4   3
+                        2   5
+                        1   3
+                        3   9
+                        3   3"), 31);
     }
 }
