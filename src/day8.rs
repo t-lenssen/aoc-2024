@@ -5,10 +5,22 @@ const ANTENNAS_N: usize = (b'z' + 1) as usize;
 
 fn init_antennas(input: &[u8], antennas: &mut [Vec<(i32, i32)>; ANTENNAS_N]) {
     for i in 0..GRID_LEN {
-        for j in 0..GRID_LEN {
-            let c = input[(GRID_LEN + 1) * i + j];
+        for j in 0..(GRID_LEN / 8) {
+            let pos: usize = (GRID_LEN + 1) * i + (j << 3);
+            if &input[pos..pos+8] == b"........" {
+                continue;
+            }
+            for k in 0..8 {
+                let c = input[pos + k];
+                if c != b'.' {
+                    antennas[c as usize].push((i as i32, ((j << 3) + k) as i32));
+                }
+            }
+        }
+        for k in 0..2 {
+            let c = input[(GRID_LEN + 1) * i + 48 + k];
             if c != b'.' {
-                antennas[c as usize].push((i as i32, j as i32));
+                antennas[c as usize].push((i as i32, 48 + k as i32));
             }
         }
     }
