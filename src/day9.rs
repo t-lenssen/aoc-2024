@@ -71,7 +71,9 @@ pub fn part2(input: &str) -> i64 {
                 earliest_len = k as u8;
             }
         }
+        
         if earliest > *file_pos {
+            if *file_len == 1 {break}
             continue
         }
 
