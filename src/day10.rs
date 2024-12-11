@@ -56,11 +56,11 @@ fn search_p2(grid: &[u8], seen: &mut [i32], h: u8, i: usize, j: usize) -> i32 {
 pub fn part2(input: &str) -> i32 {
     let mut s = 0;
     let grid = input.as_bytes();
+    let mut seen: [i32; LEN * LEN] = [-1; LEN * LEN];
 
     for i in 0..LEN {
         for j in 0..LEN {
             if grid[j + (LEN + 1) * i] == b'0' {
-                let mut seen: [i32; LEN * LEN] = [-1; LEN * LEN];
                 s += search_p2(input.as_bytes(), &mut seen, b'0', i, j);
             }
         }
